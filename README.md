@@ -57,7 +57,7 @@ git clone https://github.com/LeonardoMachado1/pygame.git
 cd pygame
 ```
 
-3 - Acesse a pasta do projeto:
+3 - Execute o arquivo Python:
 
 ```bash
 python jogo_cg.py
