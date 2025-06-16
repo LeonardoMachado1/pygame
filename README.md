@@ -2,10 +2,6 @@
 
 Uma recriação completa do clássico jogo **Campo Minado**, desenvolvida em **Python** com a biblioteca **Pygame**. O projeto traz uma interface gráfica inspirada na versão do Windows, com menus interativos, telas de vitória/derrota e todas as funcionalidades esperadas do jogo.
 
-> 💡 **Dica:** Para adicionar uma imagem ao seu README, tire um screenshot do jogo, crie uma *issue* no repositório, arraste a imagem para lá e copie o link gerado. Substitua `URL_DA_SUA_IMAGEM_AQUI` abaixo:
-
-![Screenshot do Jogo](URL_DA_SUA_IMAGEM_AQUI)
-
 ---
 
 ### ✨ Funcionalidades
