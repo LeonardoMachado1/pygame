@@ -54,7 +54,7 @@ git clone https://github.com/LeonardoMachado1/pygame.git
 2 - Acesse a pasta do projeto:
 
 ```bash
-cd seu-repositorio (AKTEASNDAKSJDKAJSDKADS)
+cd pygame
 ```
 
 3 - Acesse a pasta do projeto:
