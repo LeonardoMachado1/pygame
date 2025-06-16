@@ -1,9 +1,7 @@
-💣 Campo Minado com Pygame
+###💣 Campo Minado com Pygame
 Uma recriação completa do clássico jogo Campo Minado, desenvolvida em Python com a biblioteca Pygame. O projeto possui uma interface gráfica inspirada na versão do Windows, com menus interativos, telas de vitória/derrota e todas as funcionalidades esperadas do jogo.
 
-Nota: Para obter a URL da imagem, tire um screenshot do jogo, arraste e solte o arquivo em uma "issue" no seu próprio repositório do GitHub. Copie o link gerado e cole-o no lugar de URL_DA_SUA_IMAGEM_AQUI.
-
-✨ Funcionalidades
+### ✨ Funcionalidades
 Menu Inicial Interativo: Uma tela de boas-vindas com opções para "Iniciar" e ver os "Créditos".
 
 Jogabilidade Clássica:
@@ -26,7 +24,7 @@ Telas de Vitória e Derrota: Feedback visual claro ao final de cada partida.
 
 Sistema de Reinício: Reinicie o jogo a qualquer momento clicando no smiley ou no botão correspondente nas telas de fim de jogo.
 
-🎮 Como Jogar
+ ### 🎮 Como Jogar
 Iniciar: Abra o jogo e clique no botão "Iniciar" no menu principal.
 
 Primeiro Clique: O primeiro clique é sempre seguro. O tabuleiro e as minas são gerados após sua primeira jogada.
