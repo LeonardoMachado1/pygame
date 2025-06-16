@@ -45,3 +45,59 @@ Instale o Pygame com:
 pip install pygame
 ```
 
+---
+
+### 🚀 Como Executar
+
+1 - Clone o repositório:
+
+```bash
+git clone https://github.com/LeonardoMachado1/pygame.git
+```
+
+2 - Acesse a pasta do projeto:
+
+```bash
+cd seu-repositorio (AKTEASNDAKSJDKAJSDKADS)
+```
+
+3 - Acesse a pasta do projeto:
+
+```bash
+python jogo_cg.py
+```
+
+---
+
+### 📂 Estrutura do Código
+
+O projeto está em um único arquivo Python, com as seguintes seções:
+
+- **Configurações Globais:** Tamanho do grid, número de minas, cores, etc.
+- **Classe `Cell`:** Representa cada célula e sua lógica.
+- **Classe `Smiley`:** Gerencia o botão de reinício.
+- **Funções de UI:** Desenho de botões e telas de fim de jogo.
+- **Função `main()`:** Loop principal do jogo, estados e eventos.
+
+---
+
+### 🔧 Personalização
+
+Você pode alterar a dificuldade modificando estas constantes no topo do código:
+
+```
+GRID_SIZE = 20     # Tamanho do grid
+CELL_SIZE = 30     # Tamanho visual das células
+NUM_MINES = 40     # Número de minas
+```
+
+---
+
+### 👥 Criadores
+
+Desenvolvido por:
+
+- Pedro Henrique Canabarro  
+- Leonardo Pinto Machado  
+- Felipe Lemos
+
