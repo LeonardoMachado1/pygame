@@ -277,7 +277,7 @@ def main():
             title_rect = title_surf.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4))
             screen.blit(title_surf, title_rect)
 
-            creators = ["Pedro Henrique Canabarro", "Leonardo Pinto Machado", "Felipe Lemos"]
+            creators = ["Pedro Henrique Canabarro", "Leonardo Pinto Machado", "Felipe Lemos Oliveira", "Everton Santos de Castro"]
             for i, creator in enumerate(creators):
                 creator_surf = credits_font.render(creator, True, (80, 80, 80))
                 creator_rect = creator_surf.get_rect(center=(SCREEN_WIDTH / 2, title_rect.bottom + 50 + i * 40))
