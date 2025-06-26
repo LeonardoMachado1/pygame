@@ -95,5 +95,6 @@ Desenvolvido por:
 
 - Pedro Henrique Canabarro  
 - Leonardo Pinto Machado  
-- Felipe Lemos
+- Felipe Lemos Oliveira
+- Everton Santos de Castro
 
