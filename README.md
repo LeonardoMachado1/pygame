@@ -35,12 +35,6 @@ Uma recriação completa do clássico jogo **Campo Minado**, desenvolvida em **P
 - **Python 3.x**
 - **Pygame**
 
-Instale o Pygame com:
-
-```bash
-pip install pygame
-```
-
 ---
 
 ### 🚀 Como Executar
@@ -57,7 +51,13 @@ git clone https://github.com/LeonardoMachado1/pygame.git
 cd pygame
 ```
 
-3 - Execute o arquivo Python:
+3- Instale o Pygame com:
+
+```bash
+pip install pygame
+```
+
+4 - Execute o arquivo Python:
 
 ```bash
 python jogo_cg.py
@@ -79,7 +79,7 @@ O projeto está em um único arquivo Python, com as seguintes seções:
 
 ### 🔧 Personalização
 
-Você pode alterar a dificuldade modificando estas constantes no topo do código:
+Você pode alterar a dificuldade modificando estas constantes no arquivo de configuracao **config.py**:
 
 ```
 GRID_SIZE = 20     # Tamanho do grid
