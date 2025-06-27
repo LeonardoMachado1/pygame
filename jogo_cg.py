@@ -243,7 +243,7 @@ def main():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Clicar no botão de dica
-                
+
                 # Se for o primeiro clique, não é permitido utilizar a dica
                 if(not first_click):
                     if hint_rect.collidepoint(event.pos) and not hint_used and game_state == "playing":
@@ -256,7 +256,7 @@ def main():
                                 hint_cell.is_revealed = False
 
                             hint_time = time.time()
-                        
+
                 if smiley.handle_click(event.pos):
                     reset_game()
                 else:
@@ -316,6 +316,30 @@ def main():
                 ignore_clicks_this_frame = True
 
         if game_state in ["game_over", "win"]:
+            if game_state == "win":
+                win_font = pygame.font.SysFont(None, 45, bold=True)
+                win_message = win_font.render("Você Ganhou!", True, WIN_COLOR)
+                win_message_rect = win_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+
+                for dx in [-2, 0, 2]: # Codigo para desehnar a borda preta
+                    for dy in [-2, 0, 2]:
+                        if dx != 0 or dy != 0:
+                            border = win_font.render("Você Ganhou!", True, BLACK)
+                            screen.blit(border, win_message_rect.move(dx, dy))
+                screen.blit(win_message, win_message_rect)
+
+            elif game_state == "game_over":
+                lose_font = pygame.font.SysFont(None, 45, bold=True)
+                lose_message = lose_font.render("Game Over!", True, LOSE_COLOR)
+                lose_message_rect = lose_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+
+                for dx in [-2, 0, 2]: # Codigo para desehnar a borda preta
+                    for dy in [-2, 0, 2]:
+                        if dx != 0 or dy != 0:
+                            border = lose_font.render("Game Over!", True, BLACK)
+                            screen.blit(border, lose_message_rect.move(dx, dy))
+                screen.blit(lose_message, lose_message_rect)
+
             button_font = pygame.font.SysFont(None, 30)
             restart_text = button_font.render("Reiniciar", True, BLACK)
             home_text = button_font.render("Retornar", True, BLACK)

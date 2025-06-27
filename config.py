@@ -16,6 +16,8 @@ COLOR_FLAG = (244, 67, 54)
 COLOR_BG = (25, 25, 200)
 COLOR_BUTTON = (100, 100, 100)
 COLOR_BUTTON_HOVER = (130, 130, 130)
+WIN_COLOR = (0, 255, 0)
+LOSE_COLOR = (255, 0, 0)
 
 # Cor do botão de dica desabilitado
 HINT_BTN_DISABLED = (255, 255, 0)
