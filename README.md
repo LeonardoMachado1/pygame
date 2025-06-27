@@ -28,6 +28,8 @@ Uma recriação completa do clássico jogo **Campo Minado**, desenvolvida em **P
 4. **Marcar Minas:** Clique direito para adicionar uma bandeira.
 5. **Objetivo:** Revele todas as células sem minas para vencer. Clicar em uma mina encerra o jogo.
 
+**BOTÃO DE DICA:** Botão "Dica" releva uma célula do tabuleiro, disponível após primeiro rodada.
+
 ---
 
 ### 🛠️ Pré-requisitos
