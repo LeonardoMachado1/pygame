@@ -7,7 +7,6 @@ SCREEN_WIDTH = GRID_SIZE * CELL_SIZE
 SCREEN_HEIGHT = GRID_SIZE * CELL_SIZE + UI_HEIGHT
 
 class Cell:
-    # Inicializar uma célula na posição (x, y) no grid
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -18,15 +17,13 @@ class Cell:
         self.neighbor_mines = 0
         self.reveal_progress = 0
 
-    # Para desenhar o ícone de bomba na célula
     def draw_bomb_icon(self, surface):
         center = self.rect.center
         pygame.draw.circle(surface, BLACK, center, CELL_SIZE // 3 + 1)
         pygame.draw.line(surface, BLACK, (center[0] + 3, center[1] - 8), (center[0] + 8, center[1] - 12), 3)
         pygame.draw.circle(surface, WHITE, (center[0] - 5, center[1] - 5), 2)
 
-    # Desenhar a célula (revelada, oculta, com bandeira, bomba etc.)
-    def draw(self, surface, font, game_over=False, mine_clicked=False, dt=0):
+    def draw(self, surface, font, game_over=False, mine_clicked=False, dt=0, hint_cell=None, hint_time=0):
         if self.is_revealed:
             if self.reveal_progress < 1:
                 self.reveal_progress += dt * 4
@@ -34,6 +31,9 @@ class Cell:
             scaled_rect = self.rect.inflate(-CELL_SIZE * (1 - scale), -CELL_SIZE * (1 - scale))
 
             color = pygame.Color(*COLOR_HIDDEN).lerp(pygame.Color(*COLOR_REVEALED), scale)
+            if self == hint_cell and time.time() - hint_time < 1:
+                color = (255, 255, 100)  # destaque amarelo claro
+
             pygame.draw.rect(surface, color, scaled_rect)
             pygame.draw.line(surface, COLOR_BORDER_DARK, scaled_rect.topleft, scaled_rect.topright)
             pygame.draw.line(surface, COLOR_BORDER_DARK, scaled_rect.topleft, scaled_rect.bottomleft)
@@ -166,7 +166,7 @@ def tela_inicial(screen, font):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Campo Minado com Tela Inicial")
+    pygame.display.set_caption("Campo Minado")
     clock = pygame.time.Clock()
     font = pygame.font.SysFont(None, CELL_SIZE - 5, bold=True)
     ui_font = pygame.font.SysFont("digital-7", 40)
@@ -179,14 +179,18 @@ def main():
     game_state = "playing"
     start_time = None
     clicked_mine_cell = None
+    hint_used = False
+    hint_cell = None
+    hint_time = 0
 
     def reset_game():
-        nonlocal board, first_click, game_state, start_time, clicked_mine_cell
+        nonlocal board, first_click, game_state, start_time, clicked_mine_cell, hint_used
         board = [[Cell(x, y) for x in range(GRID_SIZE)] for y in range(GRID_SIZE)]
         first_click = True
         game_state = "playing"
         start_time = None
         clicked_mine_cell = None
+        hint_used = False
         smiley.state = "playing"
 
     def place_mines(exclude):
@@ -227,12 +231,24 @@ def main():
         dt = clock.tick(FPS) / 1000
         screen.fill(COLOR_BG)
 
-        events = pygame.event.get()
+        # Defina o hint_rect ANTES do loop de eventos!
+        hint_font = pygame.font.SysFont(None, 30)
+        hint_text = hint_font.render("Dica", True, BLACK)
+        hint_rect = pygame.Rect(SCREEN_WIDTH // 2 + 100, 5, 100, 40)
 
+        events = pygame.event.get()
+        
         for event in events:
             if event.type == pygame.QUIT:
                 running = False
-            elif game_state == "playing" and event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Clicar no botão de dica
+                if hint_rect.collidepoint(event.pos) and not hint_used and game_state == "playing":
+                    safe_cells = [c for row in board for c in row if not c.is_revealed and not c.is_mine]
+                    if safe_cells:
+                        hint_cell = random.choice(safe_cells)
+                        hint_cell.is_revealed = True
+                        hint_time = time.time()
                 if smiley.handle_click(event.pos):
                     reset_game()
                 else:
@@ -255,12 +271,25 @@ def main():
                                 reveal_cell(col, row)
                         elif event.button == 3 and not cell.is_revealed:
                             cell.is_flagged = not cell.is_flagged
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if hint_rect.collidepoint(event.pos) and not hint_used and game_state == "playing":
+                    safe_cells = [c for row in board for c in row if not c.is_revealed and not c.is_mine]
+                    if safe_cells:
+                        hint_cell = random.choice(safe_cells)
+                        hint_cell.is_revealed = True
+                        hint_used = True
+                        hint_time = time.time()
+
 
         for row in board:
             for cell in row:
-                cell.draw(screen, font, game_state != "playing", clicked_mine_cell == cell, dt)
+                cell.draw(screen, font, game_state != "playing", clicked_mine_cell == cell, dt, hint_cell)
 
         smiley.draw(screen)
+
+        pygame.draw.rect(screen, COLOR_REVEALED, hint_rect)
+        pygame.draw.rect(screen, COLOR_BORDER_DARK, hint_rect, 3)
+        screen.blit(hint_text, hint_text.get_rect(center=hint_rect.center))
 
         if start_time and game_state == "playing":
             elapsed = int(time.time() - start_time)
@@ -281,8 +310,9 @@ def main():
         if game_state in ["game_over", "win"]:
             button_font = pygame.font.SysFont(None, 30)
             restart_text = button_font.render("Reiniciar", True, BLACK)
-            home_text = button_font.render("Tela Inicial", True, BLACK)
+            home_text = button_font.render("Retornar", True, BLACK)
 
+            countdown_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 60, 200, 40)
             restart_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 20, 200, 40)
             home_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 40, 200, 40)
 
@@ -300,6 +330,12 @@ def main():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and not ignore_clicks_this_frame:
+                    if restart_rect.collidepoint(event.pos):
+                        reset_game()
+                    elif home_rect.collidepoint(event.pos):
+                        tela_inicial(screen, pygame.font.SysFont(None, 50))
+                        reset_game()
+                elif event.type == pygame.MOUSEBUTTONUP:
                     if restart_rect.collidepoint(event.pos):
                         reset_game()
                     elif home_rect.collidepoint(event.pos):
