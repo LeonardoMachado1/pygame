@@ -169,6 +169,8 @@ def main():
 
     horn_sound = pygame.mixer.Sound("tracks/fart-01.wav")
     no_bomb = pygame.mixer.Sound("tracks/no_bomb.mp3")
+    lose = pygame.mixer.Sound("tracks/oh-noo.mp3")
+    win = pygame.mixer.Sound("tracks/tetra.mp3")
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Campo Minado")
@@ -329,6 +331,7 @@ def main():
                 win_font = pygame.font.SysFont(None, 45, bold=True)
                 win_message = win_font.render("Você Ganhou!", True, WIN_COLOR)
                 win_message_rect = win_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+                win.play()
 
                 for dx in [-2, 0, 2]: # Codigo para desehnar a borda preta
                     for dy in [-2, 0, 2]:
@@ -342,6 +345,7 @@ def main():
                     lose_font = pygame.font.SysFont(None, 45, bold=True)
                     lose_message = lose_font.render("Game Over!", True, LOSE_COLOR)
                     lose_message_rect = lose_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+                    lose.play()
 
                     for dx in [-2, 0, 2]: # Codigo para desenhar a borda preta
                         for dy in [-2, 0, 2]:
