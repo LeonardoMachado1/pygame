@@ -237,7 +237,7 @@ def main():
         hint_rect = pygame.Rect(SCREEN_WIDTH // 2 + 100, 5, 100, 40)
 
         events = pygame.event.get()
-        
+
         for event in events:
             if event.type == pygame.QUIT:
                 running = False
@@ -330,12 +330,6 @@ def main():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and not ignore_clicks_this_frame:
-                    if restart_rect.collidepoint(event.pos):
-                        reset_game()
-                    elif home_rect.collidepoint(event.pos):
-                        tela_inicial(screen, pygame.font.SysFont(None, 50))
-                        reset_game()
-                elif event.type == pygame.MOUSEBUTTONUP:
                     if restart_rect.collidepoint(event.pos):
                         reset_game()
                     elif home_rect.collidepoint(event.pos):
