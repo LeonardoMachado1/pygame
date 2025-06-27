@@ -17,6 +17,7 @@ Uma recriação completa do clássico jogo **Campo Minado**, desenvolvida em **P
   - Efeito 3D nos botões e células.
 - **Telas de Vitória e Derrota:** Feedback visual ao final de cada partida.
 - **Sistema de Reinício:** Clique no smiley ou botão para recomeçar.
+- **Feature Secreta:** Ganhe e depois perca o jogo ( ͡° ͜ʖ ͡°) !!!!!!
 
 ---
 
@@ -95,8 +96,7 @@ NUM_MINES = 40     # Número de minas
 
 Desenvolvido por:
 
-- Pedro Henrique Canabarro  
-- Leonardo Pinto Machado  
+- Pedro Henrique Canabarro
+- Leonardo Pinto Machado
 - Felipe Lemos Oliveira
 - Everton Santos de Castro
-
