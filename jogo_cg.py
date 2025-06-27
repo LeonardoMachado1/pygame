@@ -295,6 +295,8 @@ def main():
 
         smiley.draw(screen)
 
+        hint_color = (COLOR_REVEALED) if first_click else BLACK  # Cinza se ainda não começou
+        hint_text = hint_font.render("Dica", True, hint_color)
         pygame.draw.rect(screen, COLOR_REVEALED, hint_rect)
         pygame.draw.rect(screen, COLOR_BORDER_DARK, hint_rect, 3)
         screen.blit(hint_text, hint_text.get_rect(center=hint_rect.center))
