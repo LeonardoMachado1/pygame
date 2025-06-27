@@ -15,7 +15,7 @@ class Cell:
         self.is_revealed = False
         self.is_flagged = False
         self.neighbor_mines = 0
-        self.reveal_progress = 0  # Para animação
+        self.reveal_progress = 0
 
     def draw_bomb_icon(self, surface):
         center = self.rect.center
@@ -23,13 +23,15 @@ class Cell:
         pygame.draw.line(surface, BLACK, (center[0] + 3, center[1] - 8), (center[0] + 8, center[1] - 12), 3)
         pygame.draw.circle(surface, WHITE, (center[0] - 5, center[1] - 5), 2)
 
-    def draw(self, surface, font, game_over=False, mine_clicked=False):
+    def draw(self, surface, font, game_over=False, mine_clicked=False, dt=0):
         if self.is_revealed:
             if self.reveal_progress < 1:
-                self.reveal_progress += 0.15
+                self.reveal_progress += dt * 4
             scale = min(1, self.reveal_progress)
             scaled_rect = self.rect.inflate(-CELL_SIZE * (1 - scale), -CELL_SIZE * (1 - scale))
-            pygame.draw.rect(surface, COLOR_REVEALED, scaled_rect)
+
+            color = pygame.Color(*COLOR_HIDDEN).lerp(pygame.Color(*COLOR_REVEALED), scale)
+            pygame.draw.rect(surface, color, scaled_rect)
             pygame.draw.line(surface, COLOR_BORDER_DARK, scaled_rect.topleft, scaled_rect.topright)
             pygame.draw.line(surface, COLOR_BORDER_DARK, scaled_rect.topleft, scaled_rect.bottomleft)
 
@@ -86,38 +88,100 @@ class Smiley:
         else:
             pygame.draw.circle(surface, BLACK, eye_l_pos, 3)
             pygame.draw.circle(surface, BLACK, eye_r_pos, 3)
-            if self.state == "wow":
-                pygame.draw.circle(surface, BLACK, (self.rect.centerx, self.rect.centery + 5), 5)
-            else:
-                pygame.draw.arc(surface, BLACK, self.rect.inflate(-20, -20).move(0, 5), 0, 3.14, 2)
+            pygame.draw.arc(surface, BLACK, self.rect.inflate(-20, -20).move(0, 5), 0, 3.14, 2)
 
     def handle_click(self, pos):
         return self.rect.collidepoint(pos)
 
+def tela_creditos(screen, font):
+    screen.fill(COLOR_BG)
+    title = font.render("Créditos", True, WHITE)
+    nomes = [
+        "Everton Santos de Castro",
+        "Felipe Lemos Oliveira",
+        "Leonardo Pinto Machado",
+        "Pedro Henrique Canabarro"
+    ]
+
+    screen.blit(title, title.get_rect(center=(SCREEN_WIDTH // 2, 50)))
+    for i, nome in enumerate(nomes):
+        texto = font.render(nome, True, COLOR_TEXT)
+        screen.blit(texto, (SCREEN_WIDTH // 2 - texto.get_width() // 2, 120 + i * 40))
+
+    voltar_font = pygame.font.SysFont(None, 30)
+    voltar_text = voltar_font.render("Voltar", True, BLACK)
+    voltar_rect = pygame.Rect(SCREEN_WIDTH // 2 - 60, SCREEN_HEIGHT - 80, 120, 40)
+    pygame.draw.rect(screen, COLOR_REVEALED, voltar_rect)
+    pygame.draw.rect(screen, COLOR_BORDER_DARK, voltar_rect, 3)
+    screen.blit(voltar_text, voltar_text.get_rect(center=voltar_rect.center))
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if voltar_rect.collidepoint(event.pos):
+                    return
+
+def tela_inicial(screen, font):
+    screen.fill(COLOR_BG)
+    title = font.render("Campo Minado", True, WHITE)
+
+    button_font = pygame.font.SysFont(None, 30)
+    iniciar_text = button_font.render("Iniciar Jogo", True, BLACK)
+    creditos_text = button_font.render("Créditos", True, BLACK)
+
+    iniciar_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 30, 200, 50)
+    creditos_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 40, 200, 50)
+
+    pygame.draw.rect(screen, COLOR_REVEALED, iniciar_rect)
+    pygame.draw.rect(screen, COLOR_BORDER_DARK, iniciar_rect, 3)
+    pygame.draw.rect(screen, COLOR_REVEALED, creditos_rect)
+    pygame.draw.rect(screen, COLOR_BORDER_DARK, creditos_rect, 3)
+
+    screen.blit(title, title.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 100)))
+    screen.blit(iniciar_text, iniciar_text.get_rect(center=iniciar_rect.center))
+    screen.blit(creditos_text, creditos_text.get_rect(center=creditos_rect.center))
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if iniciar_rect.collidepoint(event.pos):
+                    return
+                elif creditos_rect.collidepoint(event.pos):
+                    tela_creditos(screen, font)
+                    return tela_inicial(screen, font)
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Campo Minado com Animação")
+    pygame.display.set_caption("Campo Minado com Tela Inicial")
     clock = pygame.time.Clock()
     font = pygame.font.SysFont(None, CELL_SIZE - 5, bold=True)
     ui_font = pygame.font.SysFont("digital-7", 40)
     smiley = Smiley(SCREEN_WIDTH // 2, UI_HEIGHT // 2, 40)
+
+    tela_inicial(screen, pygame.font.SysFont(None, 50))
 
     board = [[Cell(x, y) for x in range(GRID_SIZE)] for y in range(GRID_SIZE)]
     first_click = True
     game_state = "playing"
     start_time = None
     clicked_mine_cell = None
-    animation_queue = []
 
     def reset_game():
-        nonlocal board, first_click, game_state, start_time, clicked_mine_cell, animation_queue
+        nonlocal board, first_click, game_state, start_time, clicked_mine_cell
         board = [[Cell(x, y) for x in range(GRID_SIZE)] for y in range(GRID_SIZE)]
         first_click = True
         game_state = "playing"
         start_time = None
         clicked_mine_cell = None
-        animation_queue = []
         smiley.state = "playing"
 
     def place_mines(exclude):
@@ -143,27 +207,25 @@ def main():
         if cell.is_revealed or cell.is_flagged:
             return
         cell.is_revealed = True
-        animation_queue.append((x, y))
         if cell.neighbor_mines == 0 and not cell.is_mine:
             for i in range(-1, 2):
                 for j in range(-1, 2):
                     nx, ny = x + j, y + i
                     if 0 <= nx < GRID_SIZE and 0 <= ny < GRID_SIZE:
-                        neighbor = board[ny][nx]
-                        if not neighbor.is_revealed and not neighbor.is_flagged:
-                            reveal_cell(nx, ny)
+                        reveal_cell(nx, ny)
 
     running = True
     while running:
+        dt = clock.tick(FPS) / 1000
         screen.fill(COLOR_BG)
-        mouse_down = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif game_state == "playing" and event.type == pygame.MOUSEBUTTONDOWN:
                 if smiley.handle_click(event.pos):
                     reset_game()
-                elif event.button in [1, 3]:
+                else:
                     mx, my = event.pos
                     col, row = mx // CELL_SIZE, (my - UI_HEIGHT) // CELL_SIZE
                     if 0 <= col < GRID_SIZE and 0 <= row < GRID_SIZE:
@@ -185,7 +247,7 @@ def main():
 
         for row in board:
             for cell in row:
-                cell.draw(screen, font, game_state != "playing", clicked_mine_cell == cell)
+                cell.draw(screen, font, game_state != "playing", clicked_mine_cell == cell, dt)
 
         smiley.draw(screen)
 
@@ -204,8 +266,35 @@ def main():
                 game_state = "win"
                 smiley.state = "win"
 
+        if game_state in ["game_over", "win"]:
+            button_font = pygame.font.SysFont(None, 30)
+            restart_text = button_font.render("Reiniciar", True, BLACK)
+            home_text = button_font.render("Tela Inicial", True, BLACK)
+
+            restart_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 20, 200, 40)
+            home_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 40, 200, 40)
+
+            pygame.draw.rect(screen, COLOR_REVEALED, restart_rect)
+            pygame.draw.rect(screen, COLOR_BORDER_DARK, restart_rect, 3)
+            screen.blit(restart_text, restart_text.get_rect(center=restart_rect.center))
+
+            pygame.draw.rect(screen, COLOR_REVEALED, home_rect)
+            pygame.draw.rect(screen, COLOR_BORDER_DARK, home_rect, 3)
+            screen.blit(home_text, home_text.get_rect(center=home_rect.center))
+
+            pygame.display.update()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if restart_rect.collidepoint(event.pos):
+                        reset_game()
+                    elif home_rect.collidepoint(event.pos):
+                        tela_inicial(screen, pygame.font.SysFont(None, 50))
+                        reset_game()
+
         pygame.display.flip()
-        clock.tick(FPS)
 
     pygame.quit()
 
