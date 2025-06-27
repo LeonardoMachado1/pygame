@@ -224,6 +224,9 @@ def main():
                         reveal_cell(nx, ny)
 
     running = True
+    ignore_clicks_this_frame = False  # Flag para ignorar cliques logo após mudança de estado
+
+
     while running:
         dt = clock.tick(FPS) / 1000
         screen.fill(COLOR_BG)
@@ -233,7 +236,9 @@ def main():
         hint_text = hint_font.render("Dica", True, BLACK)
         hint_rect = pygame.Rect(SCREEN_WIDTH // 2 + 100, 5, 100, 40)
 
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -261,6 +266,7 @@ def main():
                                 clicked_mine_cell = cell
                                 game_state = "game_over"
                                 smiley.state = "dead"
+                                ignore_clicks_this_frame = True
                             else:
                                 reveal_cell(col, row)
                         elif event.button == 3 and not cell.is_revealed:
@@ -299,6 +305,7 @@ def main():
             if revealed == GRID_SIZE * GRID_SIZE - NUM_MINES:
                 game_state = "win"
                 smiley.state = "win"
+                ignore_clicks_this_frame = True
 
         if game_state in ["game_over", "win"]:
             button_font = pygame.font.SysFont(None, 30)
@@ -319,10 +326,10 @@ def main():
 
             pygame.display.update()
 
-            for event in pygame.event.get():
+            for event in events:
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEBUTTONDOWN and not ignore_clicks_this_frame:
                     if restart_rect.collidepoint(event.pos):
                         reset_game()
                     elif home_rect.collidepoint(event.pos):
@@ -335,6 +342,7 @@ def main():
                         tela_inicial(screen, pygame.font.SysFont(None, 50))
                         reset_game()
 
+        ignore_clicks_this_frame = False  # Libera cliques novamente no próximo frame
         pygame.display.flip()
 
     pygame.quit()
