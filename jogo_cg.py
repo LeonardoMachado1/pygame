@@ -185,6 +185,21 @@ def main():
     hint_cell = None
     hint_time = 0
 
+    try:
+        lose_image_path = 'assets/lose.jpeg'
+        game_over_image = pygame.image.load(lose_image_path).convert_alpha()
+        game_over_image = pygame.transform.scale(game_over_image, (170, 220))
+        win_image_path = 'assets/win.jpeg'
+        win_image = pygame.image.load(win_image_path).convert_alpha()
+        win_image = pygame.transform.scale(win_image, (170, 220))
+    except pygame.error as e:
+        print(f"Erro ao carregar a imagem para Game Over: {e}")
+        print("Certifique-se de que a imagem '.jpeg' está na pasta 'assets' ou ajuste o caminho.")
+        game_over_image = pygame.Surface((100, 100), pygame.SRCALPHA)
+        game_over_image.fill((255, 0, 0, 128))
+        win_image = pygame.Surface((100, 100), pygame.SRCALPHA)
+        win_image.fill((255, 0, 0, 128))
+
     def reset_game():
         nonlocal board, first_click, game_state, start_time, clicked_mine_cell, hint_used, game_over_blink_timer, game_over_text_visible
         board = [[Cell(x, y) for x in range(GRID_SIZE)] for y in range(GRID_SIZE)]
@@ -330,6 +345,9 @@ def main():
                             screen.blit(border, win_message_rect.move(dx, dy))
                 screen.blit(win_message, win_message_rect)
 
+                image_rect = win_image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 200))
+                screen.blit(win_image, image_rect)
+
             elif game_state == "game_over":
                 if game_over_text_visible: # Desenha apenas se estiver visível
                     lose_font = pygame.font.SysFont(None, 45, bold=True)
@@ -342,6 +360,9 @@ def main():
                                 border = lose_font.render("Game Over!", True, BLACK)
                                 screen.blit(border, lose_message_rect.move(dx, dy))
                     screen.blit(lose_message, lose_message_rect)
+
+                image_rect = game_over_image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 200))
+                screen.blit(game_over_image, image_rect)
 
             button_font = pygame.font.SysFont(None, 30)
             restart_text = button_font.render("Reiniciar", True, BLACK)
