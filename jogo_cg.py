@@ -175,6 +175,8 @@ def main():
     tela_inicial(screen, pygame.font.SysFont(None, 50))
 
     board = [[Cell(x, y) for x in range(GRID_SIZE)] for y in range(GRID_SIZE)]
+    game_over_text_visible = True
+    game_over_blink_timer = 0
     first_click = True
     game_state = "playing"
     start_time = None
@@ -184,7 +186,7 @@ def main():
     hint_time = 0
 
     def reset_game():
-        nonlocal board, first_click, game_state, start_time, clicked_mine_cell, hint_used
+        nonlocal board, first_click, game_state, start_time, clicked_mine_cell, hint_used, game_over_blink_timer, game_over_text_visible
         board = [[Cell(x, y) for x in range(GRID_SIZE)] for y in range(GRID_SIZE)]
         first_click = True
         game_state = "playing"
@@ -192,6 +194,8 @@ def main():
         clicked_mine_cell = None
         hint_used = False
         smiley.state = "playing"
+        game_over_blink_timer = 0
+        game_over_text_visible = True
 
     def place_mines(exclude):
         positions = set()
@@ -224,12 +228,19 @@ def main():
                         reveal_cell(nx, ny)
 
     running = True
-    ignore_clicks_this_frame = False  # Flag para ignorar cliques logo após mudança de estado
+    ignore_clicks_this_frame = False
 
 
     while running:
         dt = clock.tick(FPS) / 1000
         screen.fill(COLOR_BG)
+
+        # efeito de piscar
+        if game_state == "game_over":
+            game_over_blink_timer += dt
+            if game_over_blink_timer >= 0.5: # Alterna a cada 0.5 segundos
+                game_over_text_visible = not game_over_text_visible
+                game_over_blink_timer = 0
 
         # Defina o hint_rect ANTES do loop de eventos!
         hint_font = pygame.font.SysFont(None, 30)
@@ -242,8 +253,6 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                # Clicar no botão de dica
-
                 # Se for o primeiro clique, não é permitido utilizar a dica
                 if(not first_click):
                     if hint_rect.collidepoint(event.pos) and not hint_used and game_state == "playing":
@@ -279,15 +288,6 @@ def main():
                                 reveal_cell(col, row)
                         elif event.button == 3 and not cell.is_revealed:
                             cell.is_flagged = not cell.is_flagged
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if hint_rect.collidepoint(event.pos) and not hint_used and game_state == "playing":
-                    safe_cells = [c for row in board for c in row if not c.is_revealed and not c.is_mine]
-                    if safe_cells:
-                        hint_cell = random.choice(safe_cells)
-                        hint_cell.is_revealed = True
-                        hint_used = True
-                        hint_time = time.time()
-
 
         for row in board:
             for cell in row:
@@ -329,16 +329,17 @@ def main():
                 screen.blit(win_message, win_message_rect)
 
             elif game_state == "game_over":
-                lose_font = pygame.font.SysFont(None, 45, bold=True)
-                lose_message = lose_font.render("Game Over!", True, LOSE_COLOR)
-                lose_message_rect = lose_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+                if game_over_text_visible: # Desenha apenas se estiver visível
+                    lose_font = pygame.font.SysFont(None, 45, bold=True)
+                    lose_message = lose_font.render("Game Over!", True, LOSE_COLOR)
+                    lose_message_rect = lose_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
 
-                for dx in [-2, 0, 2]: # Codigo para desehnar a borda preta
-                    for dy in [-2, 0, 2]:
-                        if dx != 0 or dy != 0:
-                            border = lose_font.render("Game Over!", True, BLACK)
-                            screen.blit(border, lose_message_rect.move(dx, dy))
-                screen.blit(lose_message, lose_message_rect)
+                    for dx in [-2, 0, 2]: # Codigo para desenhar a borda preta
+                        for dy in [-2, 0, 2]:
+                            if dx != 0 or dy != 0:
+                                border = lose_font.render("Game Over!", True, BLACK)
+                                screen.blit(border, lose_message_rect.move(dx, dy))
+                    screen.blit(lose_message, lose_message_rect)
 
             button_font = pygame.font.SysFont(None, 30)
             restart_text = button_font.render("Reiniciar", True, BLACK)
@@ -371,7 +372,7 @@ def main():
         ignore_clicks_this_frame = False  # Libera cliques novamente no próximo frame
         pygame.display.flip()
 
-    pygame.quit()
+pygame.quit()
 
 if __name__ == "__main__":
     main()
