@@ -7,6 +7,7 @@ SCREEN_WIDTH = GRID_SIZE * CELL_SIZE
 SCREEN_HEIGHT = GRID_SIZE * CELL_SIZE + UI_HEIGHT
 
 class Cell:
+    # Inicializar uma célula na posição (x, y) no grid
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -17,12 +18,14 @@ class Cell:
         self.neighbor_mines = 0
         self.reveal_progress = 0
 
+    # Para desenhar o ícone de bomba na célula
     def draw_bomb_icon(self, surface):
         center = self.rect.center
         pygame.draw.circle(surface, BLACK, center, CELL_SIZE // 3 + 1)
         pygame.draw.line(surface, BLACK, (center[0] + 3, center[1] - 8), (center[0] + 8, center[1] - 12), 3)
         pygame.draw.circle(surface, WHITE, (center[0] - 5, center[1] - 5), 2)
 
+    # Desenhar a célula (revelada, oculta, com bandeira, bomba etc.)
     def draw(self, surface, font, game_over=False, mine_clicked=False, dt=0):
         if self.is_revealed:
             if self.reveal_progress < 1:
@@ -66,10 +69,12 @@ class Cell:
             pygame.draw.line(surface, COLOR_MINE, self.rect.topright, self.rect.bottomleft, 3)
 
 class Smiley:
+    # Inicializar o smiley com posição e tamanho
     def __init__(self, x, y, size):
         self.rect = pygame.Rect(x - size // 2, y - size // 2, size, size)
-        self.state = "playing"
+        self.state = "playing"      # Pode ser: playing, win, dead, wow
 
+    # Desenha o smiley com base no estado atual (morto, feliz, surpreso etc.)
     def draw(self, surface):
         pygame.draw.circle(surface, (255, 255, 0), self.rect.center, self.rect.width // 2)
         pygame.draw.circle(surface, BLACK, self.rect.center, self.rect.width // 2, 2)
@@ -79,7 +84,7 @@ class Smiley:
             for eye in [eye_l_pos, eye_r_pos]:
                 pygame.draw.line(surface, BLACK, (eye[0] - 3, eye[1] - 3), (eye[0] + 3, eye[1] + 3), 2)
                 pygame.draw.line(surface, BLACK, (eye[0] + 3, eye[1] - 3), (eye[0] - 3, eye[1] + 3), 2)
-            pygame.draw.arc(surface, BLACK, self.rect.inflate(-20, -15).move(0, 10), 3.14, 0, 2)
+            pygame.draw.arc(surface, BLACK, self.rect.inflate(-20, -20).move(0, 7), 3.14, 0, 2)
         elif self.state == "win":
             pygame.draw.rect(surface, BLACK, (self.rect.centerx - 15, self.rect.centery - 8, 30, 8))
             pygame.draw.line(surface, BLACK, (self.rect.centerx - 20, self.rect.centery - 4), (self.rect.centerx - 15, self.rect.centery - 4), 2)
@@ -88,7 +93,7 @@ class Smiley:
         else:
             pygame.draw.circle(surface, BLACK, eye_l_pos, 3)
             pygame.draw.circle(surface, BLACK, eye_r_pos, 3)
-            pygame.draw.arc(surface, BLACK, self.rect.inflate(-20, -20).move(0, 5), 0, 3.14, 2)
+            pygame.draw.arc(surface, BLACK, self.rect.inflate(-20, -20).move(0, 8), 0, 3.14, 2)
 
     def handle_click(self, pos):
         return self.rect.collidepoint(pos)
