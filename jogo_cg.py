@@ -165,6 +165,11 @@ def tela_inicial(screen, font):
 
 def main():
     pygame.init()
+    pygame.mixer.init()
+
+    horn_sound = pygame.mixer.Sound("tracks/fart-01.wav")
+    no_bomb = pygame.mixer.Sound("tracks/no_bomb.mp3")
+
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Campo Minado")
     clock = pygame.time.Clock()
@@ -283,9 +288,11 @@ def main():
                                 clicked_mine_cell = cell
                                 game_state = "game_over"
                                 smiley.state = "dead"
+                                horn_sound.play()
                                 ignore_clicks_this_frame = True
                             else:
                                 reveal_cell(col, row)
+                                no_bomb.play()
                         elif event.button == 3 and not cell.is_revealed:
                             cell.is_flagged = not cell.is_flagged
 
