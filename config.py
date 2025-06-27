@@ -17,6 +17,10 @@ COLOR_BG = (25, 25, 200)
 COLOR_BUTTON = (100, 100, 100)
 COLOR_BUTTON_HOVER = (130, 130, 130)
 
+# Cor do botão de dica desabilitado
+HINT_BTN_DISABLED = (255, 255, 0)
+
+
 # Numeros que sao exibidos nas celulas
 NUMBER_COLORS = {
     1: (0, 0, 255),

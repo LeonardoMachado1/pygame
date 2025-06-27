@@ -243,12 +243,20 @@ def main():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # Clicar no botão de dica
-                if hint_rect.collidepoint(event.pos) and not hint_used and game_state == "playing":
-                    safe_cells = [c for row in board for c in row if not c.is_revealed and not c.is_mine]
-                    if safe_cells:
-                        hint_cell = random.choice(safe_cells)
-                        hint_cell.is_revealed = True
-                        hint_time = time.time()
+                
+                # Se for o primeiro clique, não é permitido utilizar a dica
+                if(not first_click):
+                    if hint_rect.collidepoint(event.pos) and not hint_used and game_state == "playing":
+                        safe_cells = [c for row in board for c in row if not c.is_revealed and not c.is_mine]
+                        if safe_cells:
+                            hint_cell = random.choice(safe_cells)
+                            hint_cell.is_revealed = True
+
+                            if(not safe_cells):
+                                hint_cell.is_revealed = False
+
+                            hint_time = time.time()
+                        
                 if smiley.handle_click(event.pos):
                     reset_game()
                 else:
@@ -330,12 +338,6 @@ def main():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and not ignore_clicks_this_frame:
-                    if restart_rect.collidepoint(event.pos):
-                        reset_game()
-                    elif home_rect.collidepoint(event.pos):
-                        tela_inicial(screen, pygame.font.SysFont(None, 50))
-                        reset_game()
-                elif event.type == pygame.MOUSEBUTTONUP:
                     if restart_rect.collidepoint(event.pos):
                         reset_game()
                     elif home_rect.collidepoint(event.pos):
