@@ -309,6 +309,7 @@ def main():
                                 ignore_clicks_this_frame = True
                             else:
                                 reveal_cell(col, row)
+                                no_bomb.set_volume(0.01)
                                 no_bomb.play()
                         elif event.button == 3 and not cell.is_revealed:
                             cell.is_flagged = not cell.is_flagged
@@ -346,6 +347,7 @@ def main():
                 win_font = pygame.font.SysFont(None, 45, bold=True)
                 win_message = win_font.render("Você Ganhou!", True, WIN_COLOR)
                 win_message_rect = win_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+                win.set_volume(0.2)
                 win.play()
 
                 for dx in [-2, 0, 2]: # Codigo para desehnar a borda preta
@@ -363,6 +365,7 @@ def main():
                     lose_font = pygame.font.SysFont(None, 45, bold=True)
                     lose_message = lose_font.render("Game Over!", True, LOSE_COLOR)
                     lose_message_rect = lose_message.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50))
+                    lose.set_volume(0.2)
                     lose.play()
 
                     for dx in [-2, 0, 2]: # Codigo para desenhar a borda preta
