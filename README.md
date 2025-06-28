@@ -17,6 +17,7 @@ Uma recriação completa do clássico jogo **Campo Minado**, desenvolvida em **P
   - Efeito 3D nos botões e células.
 - **Telas de Vitória e Derrota:** Feedback visual ao final de cada partida.
 - **Sistema de Reinício:** Clique no smiley ou botão para recomeçar.
+- Utilize o volume para uma experiência divertida :)
 - **Feature Secreta:** Ganhe e depois perca o jogo ( ͡° ͜ʖ ͡°) !!!!!!
 
 ---
