@@ -193,10 +193,11 @@ def main():
     hint_time = 0
 
     try:
-        lose_image_path = 'assets/lose.jpeg'
-        game_over_image = pygame.image.load(lose_image_path).convert_alpha()
-        game_over_image = pygame.transform.scale(game_over_image, (170, 220))
         win_image_path = 'assets/win.jpeg'
+        game_over_image = pygame.image.load(win_image_path).convert_alpha()
+        game_over_image = pygame.transform.flip(game_over_image, True, True)  # Inverte horizontalmente com função do pygame
+        game_over_image = pygame.transform.scale(game_over_image, (170, 220))   # Define o tamanho da imagem
+        
         win_image = pygame.image.load(win_image_path).convert_alpha()
         win_image = pygame.transform.scale(win_image, (170, 220))
     except pygame.error as e:
